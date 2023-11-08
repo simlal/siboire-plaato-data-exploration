@@ -27,12 +27,13 @@ def get_all_devices(print_data: bool=False, ids_only: bool=False) -> Union[list[
         response = requests.get(base_url + devices_endpoint, headers=header_param)
         devices_data = response.json()
         if print_data:
-            print(json.dumps(devices_data, indent=4, sort_keys=True))
+            print(json.dumps(devices_data, indent=2, sort_keys=True))
         # Fetching ids only
         if ids_only:
             devices_id = [device["id"] for device in devices_data]
             return devices_id
-        return json.dumps(devices_data, indent=2)
+        print("Success!")
+        return devices_data
     except Exception as e:
         print(f"Error fetching devices data: {e}")
         return []
@@ -64,12 +65,16 @@ def get_readings_from_single_device(
     
     # Get the readings data for the given time period
     readings_endpoint = f"{devices_endpoint}/{device_id}/readings"
-    response = requests.get(
-        base_url + readings_endpoint, 
-        headers=header_param,
-        params=params)
-    readings = response.json()
-    return json.dumps(readings, indent=2)
+    try:
+        response = requests.get(
+            base_url + readings_endpoint, 
+            headers=header_param,
+            params=params)
+        readings = response.json()
+        return readings
+    except:
+        print(f"Error fetching readings data from {readings_endpoint}")
+        return []
     
 if __name__ == "__main__":
     # Get all devices
